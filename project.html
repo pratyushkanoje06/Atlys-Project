@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Pratyush Kanoje — Web Developer</title>
+
+  <!-- Google Fonts: Space Grotesk + Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons (Day 19) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    /* ─── DESIGN TOKENS ─────────────────────────────────────────── */
+    :root {
+      --navy-900:  #0D1B2A;
+      --navy-800:  #152233;
+      --navy-700:  #1E3049;
+      --navy-600:  #253A5B;
+      --teal:      #38BDF8;
+      --teal-dim:  #1D8AB5;
+      --text-hi:   #E8F4FD;
+      --text-mid:  #9DB5CC;
+      --text-lo:   #5F7A96;
+      --border:    #1F3250;
+      --white:     #FFFFFF;
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --ff-head:   'Space Grotesk', sans-serif;
+      --ff-body:   'Inter', sans-serif;
+    }
+
+    /* ─── RESET & BASE ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--ff-body);
+      background-color: var(--navy-900);
+      color: var(--text-hi);
+      line-height: 1.7;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+
+    /* ─── TYPOGRAPHY ────────────────────────────────────────────── */
+    h1, h2, h3 { font-family: var(--ff-head); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; }
+    h1 { font-size: clamp(2.8rem, 7vw, 5.5rem); }
+    h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); color: var(--text-hi); }
+    h3 { font-size: 1.15rem; }
+    p  { color: var(--text-mid); font-size: 1rem; max-width: 62ch; }
+
+    /* ─── LAYOUT HELPERS ────────────────────────────────────────── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    section { padding: 5rem 0; }
+    .section-label {
+      font-family: var(--ff-head);
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--teal);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+      display: block;
+    }
+
+    /* ─── SKIP LINK (accessibility) ─────────────────────────────── */
+    .skip-link {
+      position: absolute;
+      top: -60px;
+      left: 1rem;
+      background: var(--teal);
+      color: var(--navy-900);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      transition: top 0.2s;
+      z-index: 9999;
+    }
+    .skip-link:focus { top: 1rem; }
+
+    /* ─── HEADER / NAV (Day 17 + 18) ────────────────────────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13, 27, 42, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .nav-logo {
+      font-family: var(--ff-head);
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--teal);
+      letter-spacing: -0.01em;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2.2rem;
+    }
+    nav ul li a {
+      font-family: var(--ff-body);
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--text-mid);
+      transition: color 0.2s;
+    }
+    nav ul li a:hover,
+    nav ul li a:focus { color: var(--teal); }
+    nav ul li a:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 3px; }
+
+    /* Hamburger (mobile) */
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.25rem;
+      color: var(--text-hi);
+      font-size: 1.4rem;
+    }
+
+    /* ─── HERO (Day 17 + 18 + 19 load animation) ────────────────── */
+    #home {
+      min-height: 92vh;
+      display: flex;
+      align-items: center;
+      padding: 5rem 0 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Subtle grid texture */
+    #home::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.25;
+      pointer-events: none;
+    }
+    /* Teal glow blob */
+    #home::after {
+      content: '';
+      position: absolute;
+      top: -120px; right: -80px;
+      width: 540px; height: 540px;
+      background: radial-gradient(circle, rgba(56,189,248,0.14) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-content { position: relative; z-index: 1; }
+    .hero-greeting {
+      font-size: 1rem;
+      color: var(--teal);
+      font-weight: 500;
+      margin-bottom: 0.9rem;
+    }
+    .hero-title {
+      color: var(--text-hi);
+      margin-bottom: 1rem;
+    }
+    .hero-title span { color: var(--teal); }
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--text-mid);
+      margin-bottom: 2.4rem;
+      max-width: 52ch;
+    }
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--ff-body);
+      font-weight: 500;
+      font-size: 0.95rem;
+      padding: 0.75rem 1.6rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.15s;
+      border: none;
+    }
+    .btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+    .btn-primary {
+      background: var(--teal);
+      color: var(--navy-900);
+    }
+    .btn-primary:hover { background: #62ccf9; box-shadow: 0 4px 20px rgba(56,189,248,0.35); transform: translateY(-1px); }
+    .btn-primary:active { background: var(--teal-dim); transform: translateY(0); }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-hi);
+      border: 1.5px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-1px); }
+    .btn-secondary:active { transform: translateY(0); }
+
+    /* Fade-in animation on page load */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-greeting { animation: fadeUp 0.5s 0.1s both; }
+    .hero-title    { animation: fadeUp 0.6s 0.25s both; }
+    .hero-sub      { animation: fadeUp 0.6s 0.4s both; }
+    .hero-cta      { animation: fadeUp 0.6s 0.55s both; }
+
+    /* ─── ABOUT (Day 17 + 18) ────────────────────────────────────── */
+    #about { background: var(--navy-800); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    .about-avatar {
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: var(--navy-700);
+      border: 3px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      margin: 0 auto;
+      position: relative;
+    }
+    .about-avatar::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px solid var(--teal);
+      opacity: 0.35;
+    }
+    .about-text p { margin-bottom: 1rem; }
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1.5rem;
+    }
+    .skill-tag {
+      font-family: var(--ff-body);
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 0.3rem 0.85rem;
+      border-radius: 999px;
+      border: 1.5px solid var(--border);
+      color: var(--text-mid);
+      background: var(--navy-700);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .skill-tag:hover { border-color: var(--teal); color: var(--teal); }
+
+    /* ─── PORTFOLIO (Day 17 + 18) ────────────────────────────────── */
+    #portfolio { background: var(--navy-900); }
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    .project-card {
+      background: var(--navy-800);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    }
+    .project-card:hover {
+      border-color: var(--teal);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(56,189,248,0.12);
+    }
+    .project-thumb {
+      width: 100%;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+    }
+    .thumb-1 { background: linear-gradient(135deg, #152233 0%, #1e3a5f 100%); }
+    .thumb-2 { background: linear-gradient(135deg, #152233 0%, #1a3a2e 100%); }
+    .thumb-3 { background: linear-gradient(135deg, #152233 0%, #3a1e3a 100%); }
+    .project-body { padding: 1.5rem; }
+    .project-body h3 { color: var(--text-hi); margin-bottom: 0.4rem; }
+    .project-body p  { font-size: 0.9rem; margin-bottom: 1rem; }
+    .project-links {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .project-link {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--teal);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: gap 0.2s;
+    }
+    .project-link:hover { gap: 0.5rem; }
+    .project-link:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 3px; }
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+    .project-tag {
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: var(--navy-700);
+      color: var(--teal);
+      border: 1px solid rgba(56,189,248,0.25);
+    }
+
+    /* Project badges & notes */
+    .sold-badge, .course-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+    }
+    .sold-badge {
+      background: rgba(56,189,248,0.12);
+      color: var(--teal);
+      border: 1px solid rgba(56,189,248,0.35);
+    }
+    .course-badge {
+      background: rgba(168,139,250,0.12);
+      color: #a78bfa;
+      border: 1px solid rgba(168,139,250,0.35);
+    }
+    .featured-card {
+      border-color: rgba(56,189,248,0.3);
+    }
+    .coming-soon-card { opacity: 0.75; }
+    .coming-soon-card:hover { opacity: 1; }
+    .project-note {
+      font-size: 0.82rem;
+      color: var(--text-lo);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+    }
+
+    /* ─── CONTACT FORM (Day 17 + 18 + 19) ───────────────────────── */
+    #contact { background: var(--navy-800); }
+    .contact-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .contact-info h2 { margin-bottom: 1rem; }
+    .contact-info p { margin-bottom: 2rem; }
+    .social-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-mid);
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+    .social-link i {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--navy-700);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .social-link:hover { color: var(--teal); }
+    .social-link:hover i { background: rgba(56,189,248,0.12); border-color: var(--teal); color: var(--teal); }
+    .social-link:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 3px; }
+
+    /* Form (Day 19) */
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+    label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-mid);
+    }
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      font-family: var(--ff-body);
+      font-size: 0.95rem;
+      background: var(--navy-700);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-hi);
+      padding: 0.75rem 1rem;
+      width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-lo); }
+    input:focus, textarea:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(56,189,248,0.12);
+    }
+    textarea { resize: vertical; min-height: 130px; }
+    .form-submit { margin-top: 0.4rem; }
+    .form-status {
+      font-size: 0.9rem;
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius-sm);
+      display: none;
+    }
+    .form-status.success {
+      display: block;
+      background: rgba(56,189,248,0.1);
+      border: 1px solid var(--teal);
+      color: var(--teal);
+    }
+    .form-status.error {
+      display: block;
+      background: rgba(255,90,90,0.1);
+      border: 1px solid #FF6B6B;
+      color: #FF6B6B;
+    }
+
+    /* ─── FOOTER (Day 17 + 18) ───────────────────────────────────── */
+    footer {
+      background: var(--navy-900);
+      border-top: 1px solid var(--border);
+      padding: 2rem 0;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-copy { font-size: 0.85rem; color: var(--text-lo); }
+    .footer-social { display: flex; gap: 1.2rem; }
+    .footer-social a {
+      font-size: 1.1rem;
+      color: var(--text-lo);
+      transition: color 0.2s;
+    }
+    .footer-social a:hover { color: var(--teal); }
+    .footer-social a:focus-visible { outline: 2px solid var(--teal); outline-offset: 4px; border-radius: 3px; }
+
+    /* ─── RESPONSIVE (Day 18 media queries) ──────────────────────── */
+    @media (max-width: 900px) {
+      .about-grid        { grid-template-columns: 1fr; gap: 2.5rem; }
+      .contact-wrapper   { grid-template-columns: 1fr; gap: 3rem; }
+    }
+    @media (max-width: 768px) {
+      .form-row { grid-template-columns: 1fr; }
+      nav ul {
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+        background: var(--navy-800);
+        border-top: 1px solid var(--border);
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        padding: 1.5rem 2rem;
+        gap: 1.2rem;
+      }
+      nav ul.open { display: flex; }
+      .nav-toggle { display: block; }
+      header { position: relative; }
+    }
+    @media (max-width: 480px) {
+      section { padding: 3.5rem 0; }
+      .hero-title { font-size: clamp(2.2rem, 10vw, 3rem); }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .about-avatar { width: 180px; height: 180px; font-size: 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Skip link for accessibility (Day 19) -->
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- ═══ HEADER / NAV (Day 17 semantic HTML + Day 18 styles) ═══ -->
+  <header role="banner">
+    <div class="nav-inner">
+      <a href="#home" class="nav-logo" aria-label="Pratyush Kanoje — Home">PK.</a>
+      <nav aria-label="Primary navigation">
+        <ul id="nav-menu">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#portfolio">Portfolio</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <!-- Mobile hamburger (Day 19 interactive) -->
+      <button class="nav-toggle" id="nav-toggle" aria-controls="nav-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars" aria-hidden="true"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══ MAIN CONTENT (Day 17 semantic structure) ═══ -->
+  <main id="main">
+
+    <!-- HERO SECTION -->
+    <section id="home" aria-label="Introduction">
+      <div class="container">
+        <div class="hero-content">
+          <p class="hero-greeting">Hi there, I'm</p>
+          <h1 class="hero-title">Pratyush <span>Kanoje</span></h1>
+          <p class="hero-sub">
+            A web development student who doesn't just learn — I build real things. I've already designed and sold a website to a real client, and I'm just getting started.
+          </p>
+          <div class="hero-cta">
+            <a href="#portfolio" class="btn btn-primary">
+              <i class="fas fa-folder-open" aria-hidden="true"></i>
+              View My Work
+            </a>
+            <a href="#contact" class="btn btn-secondary">
+              <i class="fas fa-paper-plane" aria-hidden="true"></i>
+              Contact Me
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" aria-labelledby="about-heading">
+      <div class="container">
+        <div class="about-grid">
+          <div class="about-visual">
+            <div class="about-avatar" role="img" aria-label="Pratyush Kanoje portrait">
+              👨‍💻
+            </div>
+          </div>
+          <div class="about-text">
+            <span class="section-label">About Me</span>
+            <h2 id="about-heading">Student by day,<br>developer by night</h2>
+            <p>
+              I'm Pratyush Kanoje — a web development student currently working through an intensive HTML, CSS, and JavaScript curriculum. I believe the best way to learn is to build real things for real people, so I went ahead and did exactly that.
+            </p>
+            <p>
+              I designed and sold a complete website to a local dental clinic — my first real-world client project, from initial meeting to final delivery. That experience taught me more than any classroom could: client communication, deadlines, and writing code that actually has to work.
+            </p>
+            <div class="skills-list" role="list" aria-label="Technical skills">
+              <span class="skill-tag" role="listitem">HTML5</span>
+              <span class="skill-tag" role="listitem">CSS3</span>
+              <span class="skill-tag" role="listitem">JavaScript</span>
+              <span class="skill-tag" role="listitem">Flexbox</span>
+              <span class="skill-tag" role="listitem">CSS Grid</span>
+              <span class="skill-tag" role="listitem">Responsive Design</span>
+              <span class="skill-tag" role="listitem">Git</span>
+              <span class="skill-tag" role="listitem">VS Code</span>
+              <span class="skill-tag" role="listitem">Client Work</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PORTFOLIO SECTION -->
+    <section id="portfolio" aria-labelledby="portfolio-heading">
+      <div class="container">
+        <span class="section-label">My Projects</span>
+        <h2 id="portfolio-heading">Things I've built</h2>
+        <div class="portfolio-grid">
+
+          <!-- Project 1 — REAL CLIENT PROJECT -->
+          <article class="project-card featured-card">
+            <div class="project-thumb thumb-1" aria-hidden="true">🦷</div>
+            <div class="project-body">
+              <div class="sold-badge" aria-label="Sold to real client">
+                <i class="fas fa-check-circle" aria-hidden="true"></i> Sold to Client
+              </div>
+              <h3>Dental Clinic Website</h3>
+              <div class="project-tags">
+                <span class="project-tag">HTML5</span>
+                <span class="project-tag">CSS3</span>
+                <span class="project-tag">JavaScript</span>
+                <span class="project-tag">Responsive</span>
+              </div>
+              <p>
+                A complete, professional website built and delivered for a real dental clinic — my first paid client project.
+                Includes a services section, appointment call-to-action, contact details, and a fully mobile-responsive layout.
+              </p>
+              <p class="project-note">
+                <i class="fas fa-lock" aria-hidden="true"></i> Live URL withheld at client's request.
+              </p>
+            </div>
+          </article>
+
+          <!-- Project 2 — Course project (this portfolio) -->
+          <article class="project-card">
+            <div class="project-thumb thumb-2" aria-hidden="true">🧑‍💻</div>
+            <div class="project-body">
+              <div class="course-badge" aria-label="Course project">
+                <i class="fas fa-graduation-cap" aria-hidden="true"></i> Course Project
+              </div>
+              <h3>This Portfolio</h3>
+              <div class="project-tags">
+                <span class="project-tag">HTML5</span>
+                <span class="project-tag">CSS3</span>
+                <span class="project-tag">JavaScript</span>
+                <span class="project-tag">Semantic HTML</span>
+              </div>
+              <p>
+                Built as the capstone project for Days 17–19 of my web development training. Covers semantic HTML structure, responsive CSS with Flexbox and Grid, and interactive JavaScript elements including a validated contact form.
+              </p>
+              <div class="project-links">
+                <a href="#" class="project-link" aria-label="View portfolio source on GitHub">
+                  GitHub <i class="fab fa-github" aria-hidden="true"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 3 — Open for clients -->
+          <article class="project-card coming-soon-card">
+            <div class="project-thumb thumb-3" aria-hidden="true">🤝</div>
+            <div class="project-body">
+              <h3>Your Website Could Be Here</h3>
+              <div class="project-tags">
+                <span class="project-tag">Open for Work</span>
+              </div>
+              <p>
+                Looking for my next client! If you need a clean, professional website for your business, shop, clinic, or personal brand — I'd love to build it for you.
+              </p>
+              <a href="#contact" class="btn btn-primary" style="margin-top:0.75rem; font-size:0.88rem; padding:0.6rem 1.2rem;">
+                <i class="fas fa-paper-plane" aria-hidden="true"></i> Get in Touch
+              </a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT SECTION (Day 19 form) -->
+    <section id="contact" aria-labelledby="contact-heading">
+      <div class="container">
+        <div class="contact-wrapper">
+
+          <!-- Contact info + social icons (Day 19 icons) -->
+          <div class="contact-info">
+            <span class="section-label">Get In Touch</span>
+            <h2 id="contact-heading">Have a project?<br>Let's talk.</h2>
+            <p>I'm open to freelance work, internships, and collaborations. If you need a website built — or just want to connect — send me a message and I'll get back to you soon.</p>
+            <nav class="social-links" aria-label="Social media links">
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-link">
+                <i class="fab fa-linkedin-in" aria-hidden="true"></i>
+                LinkedIn
+              </a>
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-link">
+                <i class="fab fa-github" aria-hidden="true"></i>
+                GitHub
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-link">
+                <i class="fab fa-x-twitter" aria-hidden="true"></i>
+                Twitter / X
+              </a>
+              <a href="mailto:pratyush@example.com" class="social-link">
+                <i class="fas fa-envelope" aria-hidden="true"></i>
+                pratyush@example.com
+              </a>
+            </nav>
+          </div>
+
+          <!-- Contact form (Day 19) -->
+          <div class="contact-form-wrapper">
+            <div id="form-status" class="form-status" role="alert" aria-live="polite"></div>
+            <form class="contact-form" id="contact-form" novalidate aria-label="Contact form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="name">Your Name</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Jane Smith"
+                    required
+                    autocomplete="name"
+                    aria-required="true"
+                  >
+                </div>
+                <div class="form-group">
+                  <label for="email">Your Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="jane@example.com"
+                    required
+                    autocomplete="email"
+                    aria-required="true"
+                  >
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="subject">Subject</label>
+                <input
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  placeholder="Project inquiry / Collaboration / Just saying hi"
+                  aria-required="false"
+                >
+              </div>
+              <div class="form-group">
+                <label for="message">Message</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  placeholder="Tell me about your project or idea…"
+                  required
+                  aria-required="true"
+                ></textarea>
+              </div>
+              <div class="form-submit">
+                <button type="submit" class="btn btn-primary" id="submit-btn">
+                  <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                  Send Message
+                </button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main><!-- end #main -->
+
+  <!-- ═══ FOOTER (Day 17 + 18) ═══ -->
+  <footer role="contentinfo">
+    <div class="footer-inner">
+      <p class="footer-copy">&copy; 2025 Pratyush Kanoje. Built with HTML, CSS &amp; JavaScript.</p>
+      <nav class="footer-social" aria-label="Footer social links">
+        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+          <i class="fab fa-linkedin-in" aria-hidden="true"></i>
+        </a>
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fab fa-github" aria-hidden="true"></i>
+        </a>
+        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter / X">
+          <i class="fab fa-x-twitter" aria-hidden="true"></i>
+        </a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- ═══ JAVASCRIPT — Interactive elements (Day 19) ═══ -->
+  <script>
+    // ── Mobile nav toggle ────────────────────────────────────────
+    const toggle = document.getElementById('nav-toggle');
+    const menu   = document.getElementById('nav-menu');
+    toggle.addEventListener('click', () => {
+      const isOpen = menu.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', isOpen);
+      toggle.querySelector('i').className = isOpen ? 'fas fa-times' : 'fas fa-bars';
+    });
+    // Close menu when a link is clicked
+    menu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menu.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.querySelector('i').className = 'fas fa-bars';
+      });
+    });
+
+    // ── Highlight active nav link on scroll ──────────────────────
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('nav ul li a');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.style.color = link.getAttribute('href') === '#' + entry.target.id
+              ? 'var(--teal)' : '';
+          });
+        }
+      });
+    }, { threshold: 0.35 });
+    sections.forEach(s => observer.observe(s));
+
+    // ── Contact form handling (Day 19) ───────────────────────────
+    const form       = document.getElementById('contact-form');
+    const statusEl   = document.getElementById('form-status');
+    const submitBtn  = document.getElementById('submit-btn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Basic client-side validation
+      const name    = form.name.value.trim();
+      const email   = form.email.value.trim();
+      const message = form.message.value.trim();
+      const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!name) { showStatus('error', 'Please enter your name.'); form.name.focus(); return; }
+      if (!emailRx.test(email)) { showStatus('error', 'Please enter a valid email address.'); form.email.focus(); return; }
+      if (!message) { showStatus('error', 'Please write a message before sending.'); form.message.focus(); return; }
+
+      // Simulate send (in a real site, you'd POST to a server here)
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Sending…';
+
+      await new Promise(r => setTimeout(r, 1400)); // Simulated network delay
+
+      form.reset();
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fas fa-paper-plane" aria-hidden="true"></i> Send Message';
+      showStatus('success', `Thanks ${name}! Message received — Pratyush will get back to you soon.`);
+    });
+
+    function showStatus(type, msg) {
+      statusEl.textContent = msg;
+      statusEl.className = 'form-status ' + type;
+      statusEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  </script>
+
+</body>
+</html>
